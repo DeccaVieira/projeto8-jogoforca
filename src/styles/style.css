@@ -34,8 +34,49 @@ body{
     position: fixed;
     left:1300px;
     top:40px;
+    
 }
 h3{
     color:#ffff;
     font-size:22px;
+}
+h1{
+    font-size: 58px;
+}
+.word{
+    width: 300px;
+    position: fixed;
+    top: 450px;
+    left: 1190px;
+    display: flex;
+    align-items: space-between;
+  
+    
+}
+footer{
+    position: fixed;
+    top:750px;
+    width:42%;
+    height: 80px;
+    left: 640px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+#hint {
+    width: 350px;
+    height: 40px;
+    input-security: disabled;
+}
+.button-hint{
+    width: 160px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+span{
+    font-size: 30px;
+    font-weight: 500;
 }
