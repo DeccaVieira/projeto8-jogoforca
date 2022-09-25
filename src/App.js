@@ -16,17 +16,18 @@ export default function App() {
 
     const alfabeto = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
     const alphabet = alfabeto; //map que deixa as letras do teclado maiúsculas
-    //const aleatory = Math.floor((Math.random() * palavras.length)) //pega palavras aleatórias na matriz
+    const aleatory = Math.floor((Math.random() * palavras.length)) //pega palavras aleatórias na matriz
     const chooseWord = palavras[10].split('') // transforma a palavra escolhida em matriz
     const [disable, setDisable] = React.useState(false); //estado que habilita os botôes
     const [currentWord, setCurrentWord] = React.useState(chooseWord.map(function () { return '-' }))
     const gallowImg = [forca0, forca1, forca2, forca3, forca4, forca5, forca6]
     const [erros, setErros]=React.useState(0)
-
-
+    let [acertos, setAcertos] = React.useState(0)
+    let aux = [...currentWord];
+let ac= 0 // tirar essa variavel que controla os acerto se não usar
     function checkLetter(letter) { //função para tentar trocar o valor de - para a letra qdo der true
         //desabilitar a letra
-setDisable(false)
+setDisable(true)
         let indices = [] //indice que esta sendo usado para pegar a posição da palavra escolhida
         if (!chooseWord.includes(letter)) {
 setErros(erros +1)
@@ -34,23 +35,26 @@ setErros(erros +1)
         } else {
             for (let i = 0; i < chooseWord.length; i++) {
                 if (chooseWord[i] === letter) {
-                    indices.push(i);
+                  ac =  indices.push(i);
+setAcertos(acertos + (ac))
                 }
             }
-            let aux = [...currentWord];
+            
 
             for (let i = 0; i < aux.length; i++) {
                 aux[indices[i]] = letter
             }
 
             setCurrentWord(aux)
+            
         }
-        console.log(chooseWord)
-
+        
 
         
     }
-
+   
+   console.log(aux)
+     console.log(acertos)    
 
 
 
@@ -60,18 +64,24 @@ setErros(erros +1)
 
 {erros < 6 ? 
      <Gallow src={gallowImg[erros]} alt="gallow" /> :
-<Gallow src={gallowImg[0]} alt="gallow" /> }
+<Gallow src={gallowImg[6]} alt="gallow" /> }
 
 
-        <ChooseWord onClick={(aleatory) => Math.floor((Math.random() * palavras.length))} ><H3>Escolher Palavra</H3></ChooseWord>
+        <ChooseWord onClick={() => (Math.floor((Math.random() * palavras.length)))} ><H3>Escolher Palavra</H3></ChooseWord>
         
 
-
-        <Word><H1>{currentWord}</H1></Word> 
+        {!aux.includes('-') ?
+<Word><Green><h1>{chooseWord}</h1></Green></Word>:
+erros > 5 ?
+    <Word><Red><h1>{chooseWord}</h1></Red></Word> :
+    <Word><H1>{currentWord}</H1></Word>
+}
 
 
         <Letters>
+            
             {alphabet.map(letter => <button onClick={() => checkLetter(letter)}>{letter}</button>)}
+            
         </Letters>
 
 
@@ -90,6 +100,20 @@ setErros(erros +1)
 const Body = styled.body`
 box-sizing: border-box;
 text-decoration: none;
+`
+const Red = styled.span`
+
+h1{
+    color: red;
+    font-size: 58px;
+}
+`
+const Green = styled.span`
+
+h1{
+    color: green;
+    font-size: 58px;
+}
 `
 
 const Letters = styled.div`
