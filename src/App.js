@@ -17,87 +17,126 @@ export default function App() {
     const alfabeto = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
     const alphabet = alfabeto; //map que deixa as letras do teclado maiúsculas
     const aleatory = Math.floor((Math.random() * palavras.length)) //pega palavras aleatórias na matriz
-    const chooseWord = palavras[10].split('') // transforma a palavra escolhida em matriz
-    const [disable, setDisable] = React.useState(false); //estado que habilita os botôes
-    const [currentWord, setCurrentWord] = React.useState(chooseWord.map(function () { return '-' }))
+    const [chooseWord, setChooseWord] = React.useState([]) // transforma a palavra escolhida em matriz
+    const [disable, setDisable] = React.useState(true); //estado que habilita os botôes
+    const [currentWord, setCurrentWord] = React.useState([])
+    const [chutes, setChutes] = React.useState([])
     const gallowImg = [forca0, forca1, forca2, forca3, forca4, forca5, forca6]
-    const [erros, setErros]=React.useState(0)
+    let [erros, setErros] = React.useState(0)
     let [acertos, setAcertos] = React.useState(0)
-    let aux = [...currentWord];
-let ac= 0 // tirar essa variavel que controla os acerto se não usar
+
+    let ac = 0 // tirar essa variavel que controla os acerto se não usar
+
+
+    function gerarPalavra() {
+        setDisable(false)
+        setChooseWord(palavras[aleatory].split(''))
+        setCurrentWord(Array(palavras[aleatory].length).fill("-"))
+
+if(acertos>= chooseWord.length || erros >=5){
+    
+    setAcertos(0)
+    setErros(0)
+    setChutes("")
+}
+
+    }
+
+
+
+
+
     function checkLetter(letter) { //função para tentar trocar o valor de - para a letra qdo der true
         //desabilitar a letra
-setDisable(true)
+//setChutes(chutes.push(letter))
+setChutes([...chutes,letter])
+
         let indices = [] //indice que esta sendo usado para pegar a posição da palavra escolhida
         if (!chooseWord.includes(letter)) {
-setErros(erros +1)
+            setErros(erros + 1)
 
         } else {
             for (let i = 0; i < chooseWord.length; i++) {
                 if (chooseWord[i] === letter) {
-                  ac =  indices.push(i);
-setAcertos(acertos + (ac))
+                    ac = indices.push(i);
+                    setAcertos(acertos + (ac))
                 }
             }
-            
+           
+            let aux = [...currentWord];
 
             for (let i = 0; i < aux.length; i++) {
                 aux[indices[i]] = letter
+                console.log(letter)
             }
 
             setCurrentWord(aux)
-            
+
         }
-        
+        if (acertos <= chooseWord.length || erros < 5){
+            setDisable(false)
+    }else{
+        setDisable(true)
+        setErros(0)
+        setAcertos(0) 
+        }
+  
+console.log(chutes)
 
-        
     }
-   
-   console.log(aux)
-     console.log(acertos)    
 
+
+    console.log(acertos)
+    console.log(erros)
+    console.log(chooseWord)
 
 
     return (
-    <Body>
-    
-
-{erros < 6 ? 
-     <Gallow src={gallowImg[erros]} alt="gallow" /> :
-<Gallow src={gallowImg[6]} alt="gallow" /> }
+        <Body>
 
 
-        <ChooseWord onClick={() => (Math.floor((Math.random() * palavras.length)))} ><H3>Escolher Palavra</H3></ChooseWord>
-        
-
-        {!aux.includes('-') ?
-<Word><Green><h1>{chooseWord}</h1></Green></Word>:
-erros > 5 ?
-    <Word><Red><h1>{chooseWord}</h1></Red></Word> :
-    <Word><H1>{currentWord}</H1></Word>
-}
+            {erros < 6 ?
+                <Gallow src={gallowImg[erros]} alt="gallow" /> :
+                <Gallow src={gallowImg[6]} alt="gallow" />}
 
 
-        <Letters>
-            
-            {alphabet.map(letter => <button onClick={() => checkLetter(letter)}>{letter}</button>)}
-            
-        </Letters>
+            <ChooseWord onClick={gerarPalavra} ><H3>Escolher Palavra</H3></ChooseWord>
+
+
+            {acertos >= chooseWord.length ?
+                <Word><Green><h1>{chooseWord}</h1></Green></Word> :
+                erros <= 5 ?
+                    <Word><H1>{currentWord}</H1></Word> :
+                    <Word><Red><h1>{chooseWord}</h1></Red></Word>
+
+            }
+
+
+            <Letters>
+
+                {alphabet.map(letter => <button 
+                key={letter}
+                disabled={acertos >= chooseWord.length || erros >=6 ||disable ? true : chutes.includes(letter) ? true : false} 
+                onClick={() => checkLetter(letter)}>
+
+                    {letter}</button>)}
+
+            </Letters>
 
 
 
-        <Footer>
-            <Span>Já sei a palavra!</Span>
+            <Footer>
+                <Span>Já sei a palavra!</Span>
 
-            <Hint disabled={disable}></Hint>
-            <ButtonHint className="button-hint" disabled={disable}><H2>Chutar</H2></ButtonHint>
-        </Footer>
-    
-    </Body>
+                <Hint disabled={acertos >= chooseWord.length || erros >=6 ? true : false}></Hint>
+                <ButtonHint className="button-hint" disabled={acertos >= chooseWord.length || erros >=6 ? true : false}><H2>Chutar</H2></ButtonHint>
+            </Footer>
+
+        </Body>
     )
 }
 
-const Body = styled.body`
+const Body = styled.main`
 box-sizing: border-box;
 text-decoration: none;
 `
@@ -135,12 +174,12 @@ button{
 }
     `
 
-const Gallow = styled.img `
+const Gallow = styled.img`
 width: 500px;
 left:600px;
 position: absolute;
 `
-const ChooseWord = styled.button `
+const ChooseWord = styled.button`
 background-color: green;
     border-radius: 18px;
     width: 195px;
@@ -152,17 +191,17 @@ background-color: green;
     top:40px;
     
 `
-const H3 = styled.h3 `
+const H3 = styled.h3`
 color:#ffff;
 font-size:22px;
 `
-const H1 = styled.h1 `
+const H1 = styled.h1`
 font-size: 58px;
 `
-const H2 = styled.h2 `
+const H2 = styled.h2`
 font-size:24px
 `
-const Word = styled.div `
+const Word = styled.div`
 width: 300px;
 position: fixed;
 top: 450px;
@@ -171,7 +210,7 @@ display: flex;
 align-items: space-between;
 `
 
-const Footer = styled.footer `
+const Footer = styled.footer`
 position: fixed;
     top:750px;
     width:42%;
@@ -181,12 +220,12 @@ position: fixed;
     align-items: center;
     justify-content: space-around;
 `
-const Hint = styled.input `
+const Hint = styled.input`
 width: 350px;
 height: 40px;
 input-security: disabled;
 `
-const ButtonHint = styled.button `
+const ButtonHint = styled.button`
 width: 160px;
     height: 40px;
     display: flex;
@@ -214,14 +253,14 @@ font-weight: 500;
 
 
 
+/*
 
 
 
 
 
 
-
-/*import React from "react"
+import React from "react"
 import palavras from "./palavras"
 import "./styles/style.css"
 import forca0 from "./img/assets/forca0.png"
