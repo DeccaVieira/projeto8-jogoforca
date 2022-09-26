@@ -17,7 +17,7 @@ export default function App() {
     const alfabeto = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
     const alphabet = alfabeto; //map que deixa as letras do teclado maiúsculas
     const aleatory = Math.floor((Math.random() * palavras.length)) //pega palavras aleatórias na matriz
-    const [chooseWord, setChooseWord] = React.useState([]) // transforma a palavra escolhida em matriz
+    let [chooseWord, setChooseWord] = React.useState([]) // transforma a palavra escolhida em matriz
     const [disable, setDisable] = React.useState(true); //estado que habilita os botôes
     const [currentWord, setCurrentWord] = React.useState([])
     const [chosenLetter, setchosenLetter] = React.useState([])
@@ -28,7 +28,10 @@ const[chutes, setChutes]= React.useState("")
     let ac = 0 // tirar essa variavel que controla os acerto se não usar
 
 
-    function gerarPalavra() {
+
+
+
+    function wordArray() {
         setDisable(false)
         setChooseWord(palavras[aleatory].split(''))
         setCurrentWord(Array(palavras[aleatory].length).fill("-"))
@@ -46,6 +49,7 @@ const[chutes, setChutes]= React.useState("")
     function checkLetter(letter) { //função para tentar trocar o valor de - para a letra qdo der true
         //desabilitar a letra
 //setchosenLetter(chosenLetter.push(letter))
+
 setchosenLetter([...chosenLetter,letter])
 
         let indices = [] //indice que esta sendo usado para pegar a posição da palavra escolhida
@@ -70,6 +74,7 @@ setchosenLetter([...chosenLetter,letter])
             setCurrentWord(aux)
 
         }
+        
         if (acertos <= chooseWord.length || erros < 5){
             setDisable(false)
     }else{
@@ -81,24 +86,28 @@ setchosenLetter([...chosenLetter,letter])
 
 
     }
-    console.log(chooseWord)
-console.log(chutes)
-console.log(erros)
-console.log(acertos)
+    console.log(typeof(chooseWord))
+
+
+   
 console.log(chooseWord)
 console.log(chutes)
+
+
 function game(){
-    
-if(chutes === chooseWord){
+ 
+
+    if(JSON.stringify(chutes) === JSON.stringify(chooseWord)){
 
     setAcertos(chooseWord.length)
-    console.log("ganhouuuu")
+    console.log("ganhou")
 }else{
     setErros(6)
-    console.log("perdeuu")
+    console.log("perdeu")
 }
 
 }
+
    
 
 
@@ -107,11 +116,11 @@ if(chutes === chooseWord){
 
 
             {erros < 6 ?
-                <Gallow src={gallowImg[erros]} alt="gallow" /> :
-                <Gallow src={gallowImg[6]} alt="gallow" />}
+                <Gallow data-identifier="game-image" src={gallowImg[erros]} alt="gallow" /> :
+                <Gallow data-identifier="game-image" src={gallowImg[6]} alt="gallow" />}
 
 
-            <ChooseWord onClick={gerarPalavra} ><H3>Escolher Palavra</H3></ChooseWord>
+            <ChooseWord data-identifier="choose-word" onClick={wordArray} ><H3>Escolher Palavra</H3></ChooseWord>
 
 
             {acertos >= chooseWord.length ?
@@ -125,7 +134,7 @@ if(chutes === chooseWord){
 
             <Letters>
 
-                {alphabet.map(letter => <button 
+                {alphabet.map(letter => <button data-identifier="letter"
                 key={letter}
                 disabled={acertos >= chooseWord.length || erros >=6 ||disable ? true : chosenLetter.includes(letter) ? true : false} 
                 onClick={() => checkLetter(letter)}>
@@ -140,7 +149,7 @@ if(chutes === chooseWord){
                 <Span>Já sei a palavra!</Span>
 
                 <Hint onChange={(e) => setChutes((e.target.value).split('')) }disabled={acertos >= chooseWord.length || erros >=6 ? true : false}></Hint>
-                <ButtonHint onClick={game} className="button-hint" disabled={acertos >= chooseWord.length || erros >=6 ? true : false}><H2>Chutar</H2></ButtonHint>
+                <ButtonHint data-identifier="guess-button" onClick={game} className="button-hint" disabled={acertos >= chooseWord.length || erros >=6 ? true : false}><H2>Chutar</H2></ButtonHint>
             </Footer>
 
         </Body>
@@ -148,8 +157,11 @@ if(chutes === chooseWord){
 }
 
 const Body = styled.main`
+
 box-sizing: border-box;
 text-decoration: none;
+padding: 0 50px
+
 `
 const Red = styled.span`
 
@@ -169,36 +181,38 @@ h1{
 const Letters = styled.div`
 display: flex;
     flex-wrap: wrap;
-    width: 48%;
-
+    width: 80%;
+    background-color:pink;
+    position:absolute;
 button{
     background-color: lightgray;
     border: none;
     margin: 8px;
-    width: 50px;
-    height: 50px;
-    position: relative;
-    top:600px;
-    left: 600px;
+    width: 6%;
+    height: 25px;
+    
+    left: 100px;
     border-radius: 5px;
     text-transform: uppercase;
 }
     `
 
 const Gallow = styled.img`
-width: 500px;
-left:600px;
-position: absolute;
+width: 28%;
+position: relative;
+left:373px;
+
 `
-const ChooseWord = styled.button`
+const ChooseWord = styled.div`
 background-color: green;
     border-radius: 18px;
-    width: 195px;
-    height: 60px;
+    width: 14.5%;
+    height: 40px;
     display: flex;
     align-items: center;
-    position: fixed;
-    left:1300px;
+    justify-content:center;
+    position: absolute;
+    left:940px;
     top:40px;
     
 `
@@ -213,31 +227,32 @@ const H2 = styled.h2`
 font-size:24px
 `
 const Word = styled.div`
-width: 300px;
+width: 25%;
 position: fixed;
-top: 450px;
-left: 1190px;
+top: 300px;
+left: 880px;
 display: flex;
 align-items: space-between;
 `
 
 const Footer = styled.footer`
-position: fixed;
-    top:750px;
-    width:42%;
+
+position:absolute;
+top:500px;
+    width:85%;
     height: 80px;
-    left: 640px;
+    left: 14px;
     display: flex;
     align-items: center;
     justify-content: space-around;
 `
 const Hint = styled.input`
-width: 350px;
+width: 40%;
 height: 40px;
 input-security: disabled;
 `
 const ButtonHint = styled.button`
-width: 160px;
+width: 15%;
     height: 40px;
     display: flex;
     align-items: center;
