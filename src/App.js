@@ -20,11 +20,11 @@ export default function App() {
     const [chooseWord, setChooseWord] = React.useState([]) // transforma a palavra escolhida em matriz
     const [disable, setDisable] = React.useState(true); //estado que habilita os botôes
     const [currentWord, setCurrentWord] = React.useState([])
-    const [chutes, setChutes] = React.useState([])
+    const [chosenLetter, setchosenLetter] = React.useState([])
     const gallowImg = [forca0, forca1, forca2, forca3, forca4, forca5, forca6]
     let [erros, setErros] = React.useState(0)
     let [acertos, setAcertos] = React.useState(0)
-
+const[chutes, setChutes]= React.useState("")
     let ac = 0 // tirar essa variavel que controla os acerto se não usar
 
 
@@ -32,13 +32,10 @@ export default function App() {
         setDisable(false)
         setChooseWord(palavras[aleatory].split(''))
         setCurrentWord(Array(palavras[aleatory].length).fill("-"))
-
-if(acertos>= chooseWord.length || erros >=5){
-    
-    setAcertos(0)
-    setErros(0)
-    setChutes("")
-}
+        setAcertos(0)
+        setErros(0)
+        setchosenLetter("")
+        setChutes([])
 
     }
 
@@ -48,8 +45,8 @@ if(acertos>= chooseWord.length || erros >=5){
 
     function checkLetter(letter) { //função para tentar trocar o valor de - para a letra qdo der true
         //desabilitar a letra
-//setChutes(chutes.push(letter))
-setChutes([...chutes,letter])
+//setchosenLetter(chosenLetter.push(letter))
+setchosenLetter([...chosenLetter,letter])
 
         let indices = [] //indice que esta sendo usado para pegar a posição da palavra escolhida
         if (!chooseWord.includes(letter)) {
@@ -81,14 +78,28 @@ setChutes([...chutes,letter])
         setAcertos(0) 
         }
   
-console.log(chutes)
+
 
     }
-
-
-    console.log(acertos)
-    console.log(erros)
     console.log(chooseWord)
+console.log(chutes)
+console.log(erros)
+console.log(acertos)
+console.log(chooseWord)
+console.log(chutes)
+function game(){
+    
+if(chutes === chooseWord){
+
+    setAcertos(chooseWord.length)
+    console.log("ganhouuuu")
+}else{
+    setErros(6)
+    console.log("perdeuu")
+}
+
+}
+   
 
 
     return (
@@ -116,7 +127,7 @@ console.log(chutes)
 
                 {alphabet.map(letter => <button 
                 key={letter}
-                disabled={acertos >= chooseWord.length || erros >=6 ||disable ? true : chutes.includes(letter) ? true : false} 
+                disabled={acertos >= chooseWord.length || erros >=6 ||disable ? true : chosenLetter.includes(letter) ? true : false} 
                 onClick={() => checkLetter(letter)}>
 
                     {letter}</button>)}
@@ -128,8 +139,8 @@ console.log(chutes)
             <Footer>
                 <Span>Já sei a palavra!</Span>
 
-                <Hint disabled={acertos >= chooseWord.length || erros >=6 ? true : false}></Hint>
-                <ButtonHint className="button-hint" disabled={acertos >= chooseWord.length || erros >=6 ? true : false}><H2>Chutar</H2></ButtonHint>
+                <Hint onChange={(e) => setChutes((e.target.value).split('')) }disabled={acertos >= chooseWord.length || erros >=6 ? true : false}></Hint>
+                <ButtonHint onClick={game} className="button-hint" disabled={acertos >= chooseWord.length || erros >=6 ? true : false}><H2>Chutar</H2></ButtonHint>
             </Footer>
 
         </Body>
